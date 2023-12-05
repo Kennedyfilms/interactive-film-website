@@ -13,7 +13,7 @@ const upload = multer({ storage });
 app.get('/', async (req, res) => {
     try {
         // Assuming 'index.html' is the name of your HTML file
-        const filePath = path.join(__dirname, 'public', 'index.html');
+        const filePath = path.join(__dirname, 'index.html');
 
         // Read the HTML file and send it as the response
         const data = await fs.readFile(filePath, 'utf8');
