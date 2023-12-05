@@ -5,15 +5,15 @@
 // For example, if Recorder.js is in the same directory as recording.js:
 // import Recorder from './Recorder'; 
 
-let recorder;
+let Recorder;
 
 function startRecording() {
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
             const audioContext = new AudioContext();
             const inputNode = audioContext.createMediaStreamSource(stream);
-            recorder = new Recorder(inputNode);
-            recorder.record();
+            Recorder = new Recorder(inputNode); // Corrected variable name
+            Recorder.record();
         })
         .catch((error) => {
             console.error('Error accessing microphone:', error);
@@ -21,11 +21,11 @@ function startRecording() {
 }
 
 function stopRecording() {
-    recorder.stop();
+    Recorder.stop();
 }
 
 function submitRecording() {
-    recorder.exportWAV((blob) => {
+    Recorder.exportWAV((blob) => {
         const formData = new FormData();
         formData.append('audioRecording', blob, 'recorded_audio.wav');
 
