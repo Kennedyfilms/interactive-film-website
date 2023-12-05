@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Interactive Film</title>
+     <script src="C:\Users\Oisin\interactive-film-website\public\recording.js"></script>
+    </head>
+    <body>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label for="audio">Record your line:</label>
+            <input type="file" accept="audio/*" capture="microphone" name="audio" required>
+            <button type="submit">Submit</button>
+        </form>
+
+        <form id="recordingForm" enctype="multipart/form-data">
+    <label for="audioRecording">Record your line:</label>
+    <input type="file" id="audioRecording" name="audioRecording" accept="audio/*" capture>
+    <button type="button" onclick="startRecording()">Start Recording</button>
+    <button type="button" onclick="stopRecording()">Stop Recording</button>
+    <button type="button" onclick="submitRecording()">Submit</button>
+</form>
+
+<script src="/recording.js"></script>
+
+<script>
+let recorder;
+
+function startRecording() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then((stream) => {
+            const audioContext = new AudioContext();
+            const inputNode = audioContext.createMediaStreamSource(stream);
+            recorder = new Recorder(inputNode);
+            recorder.record();
+        })
+        .catch((error) => {
+            console.error('Error accessing microphone:', error);
+        });
+}
+
+function stopRecording() {
+    recorder.stop();
+}
+
+function submitRecording() {
+    recorder.exportWAV((blob) => {
+        const formData = new FormData();
+        formData.append('audioRecording', blob, 'recorded_audio.wav');
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Server response:', data);
+        })
+        .catch(error => {
+            console.error('Error uploading audio:', error);
+        });
+    });
+}
+</script>
+    </body>
+    </html>
